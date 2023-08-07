@@ -39,7 +39,7 @@
                 @else
                 inactive
                 @endif</td>
-            <td><img src="{{ $category->getProfile() }}"style="height: 50px; width: 50px; border-radius:50px ;"></td>
+            <td><img src="{{ $category->getProfile() }}"style="height: 80px; width: 80px; border-radius:50px ;"></td>
             @if(!empty($category->getProfile()))
 
              

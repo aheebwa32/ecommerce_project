@@ -17,6 +17,12 @@
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
      <link rel="stylesheet" href="{{ asset('Assets/css/custom.css') }}">
+     <link rel="stylesheet" href="{{ asset('Assets/css/owl.carousel.min.css') }}">
+     <link rel="stylesheet" href="{{ asset('Assets/css/owl.theme.default.min.css') }}">
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+     <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap" rel="stylesheet">
+     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/fontawesome.min.css" integrity="sha384-QYIZto+st3yW+o8+5OHfT6S482Zsvz2WfOzpFSXMF9zqeLcFV0/wlZpMtyFcZALm" crossorigin="anonymous">
     @livewireStyles
 </head>
 <body>
@@ -33,7 +39,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
-
+                       @include('layouts.includes.frontnavbar')
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -81,10 +87,13 @@
         <main class="py-4">
             @yield('content')
         </main>
+        
     </div>
+    @yield('scripts')
     {{-- <script src="{{ asset('js/app.js') }}"></script> --}}
     <script src="{{ asset('Assets/js/jquery-3.7.0.min.js') }}"></script>
     <script src="{{ asset('Assets/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('Assets/js/owl.carousel.min.js') }}"></script>
     
     @livewireScripts
 </body>

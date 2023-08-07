@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 Route::get('/', [App\Http\Controllers\FrontendController::class, 'index']);
+Route::get('frontend/category', [App\Http\Controllers\FrontendController::class, 'category']);
+Route::get('frontend/view_category/{id}', [App\Http\Controllers\FrontendController::class, 'view_category']);
+Route::get('frontend/category/{category}/{product}', [App\Http\Controllers\FrontendController::class, 'view_product']);
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 // Route::get('/logout', '\App\Http\Controllers\Auth\LoginController@logout');
 
