@@ -45,6 +45,14 @@ jobs:
       - name: Build NPM Assets
         run: npm run build
 
+
+      # Wait for MySQL service to be ready
+      - name: Wait for MySQL
+        run: |
+          until mysql -h mysql -u root -p'' -e 'SELECT 1'; do
+            echo "Waiting for MySQL..."
+            sleep 1
+          done
       # Set environment variables
       - name: Set environment variables
         run: |
@@ -57,14 +65,6 @@ jobs:
           echo "DB_USERNAME=root" >> .env
           echo "DB_PASSWORD=" >> .env
 
-
-      # Wait for MySQL service to be ready
-      - name: Wait for MySQL
-        run: |
-          until mysql -h mysql -u root -p'' -e 'SELECT 1'; do
-            echo "Waiting for MySQL..."
-            sleep 5
-          done
 
       # Run database migrations (if required)
       - name: Run Migrations
