@@ -8,7 +8,7 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use App\Models\Category;
 
-class Frontendcontroller extends Controller
+class FrontendController extends Controller
 {
     public function index(){
         // $sliders=Slider::where('status','1')->get();

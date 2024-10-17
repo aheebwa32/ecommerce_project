@@ -14,8 +14,8 @@
         </a>
         <div class="collapse" id="ui-basic">
           <ul class="nav flex-column sub-menu">
-            <li class="nav-item"> <a class="nav-link" href="{{ url('admin/create_category') }}">Add Category</a></li>
-            <li class="nav-item"> <a class="nav-link" href="">Edit Category</a></li>
+            <li class="nav-item"> <a class="nav-link" href="{{url('admin/category')}}">View Category</a></li>
+            {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('admin/create_category') }}">Add Category</a></li> --}}
           </ul>
         </div>
       </li>
@@ -27,8 +27,8 @@
         </a>
         <div class="collapse" id="ui-basic">
           <ul class="nav flex-column sub-menu">
-            <li class="nav-item"> <a class="nav-link" href="{{ url('admin/create_Product') }}">Add Product</a></li>
-            <li class="nav-item"> <a class="nav-link" href="">View Product</a></li>
+            {{-- <li class="nav-item"> <a class="nav-link" href="{{ url('administrator/create_Product') }}">Add Product</a></li> --}}
+            <li class="nav-item"> <a class="nav-link" href="{{url('admin/product')}}">View Product</a></li>
           </ul>
         </div>
       </li>
@@ -38,7 +38,7 @@
           <span class="menu-title">sliders</span>
         </a>
       </li>
-      <li class="nav-item">
+      {{-- <li class="nav-item">
         <a class="nav-link" data-bs-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
           <i class="mdi mdi-account menu-icon"></i>
           <span class="menu-title">User Pages</span>
@@ -53,7 +53,7 @@
             <li class="nav-item"> <a class="nav-link" href="pages/samples/lock-screen.html"> Lockscreen </a></li>
           </ul>
         </div>
-      </li>
+      </li> --}}
       <li class="nav-item">
         <a class="nav-link" href="documentation/documentation.html">
           <i class="mdi mdi-file-document-box-outline menu-icon"></i>

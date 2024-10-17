@@ -7,7 +7,7 @@
     <div class="card">
    <div class="card-header">
     <h3>Add Category
-        <a href="{{ url('admin/category') }}" class="btn btn-primary btn-sm text-white float-end">Back</a>
+        <a href="{{ url('administrator/category') }}" class="btn btn-primary btn-sm text-white float-end">Back</a>
     </h3>
 </div> 
     
