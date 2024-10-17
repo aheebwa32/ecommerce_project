@@ -59,13 +59,17 @@ jobs:
           echo "APP_ENV=testing" >> .env
           echo "APP_KEY=base64:XYzqBnlzNzrKtagh9OOSKoAVzgMDE6PlJB25K7vdXMs=" >> .env
           echo "DB_CONNECTION=mysql" >> .env
-          echo "DB_HOST=mysql" >> .env  # Set to 'mysql' for GitHub Actions
+          echo "DB_HOST=127.0.0.1" >> .env  # Set to 'mysql' for GitHub Actions
           echo "DB_PORT=3306" >> .env
           echo "DB_DATABASE=ecommerce_project" >> .env
           echo "DB_USERNAME=root" >> .env
           echo "DB_PASSWORD=" >> .env
 
 
+      # Ensure MySQL is running (for local MySQL service)
+      - name: Ensure MySQL is installed and running
+        run: sudo systemctl start mysql
+        
       # Run database migrations (if required)
       - name: Run Migrations
         run: php artisan migrate --force
