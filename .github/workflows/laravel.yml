@@ -46,13 +46,6 @@ jobs:
         run: npm run build
 
 
-      # Wait for MySQL service to be ready
-      - name: Wait for MySQL
-        run: |
-          until mysql -h mysql -u root -p'' -e 'SELECT 1'; do
-            echo "Waiting for MySQL..."
-            sleep 1
-          done
       # Set environment variables
       - name: Set environment variables
         run: |
@@ -69,7 +62,7 @@ jobs:
       # Ensure MySQL is running (for local MySQL service)
       - name: Ensure MySQL is installed and running
         run: sudo systemctl start mysql
-        
+
       # Run database migrations (if required)
       - name: Run Migrations
         run: php artisan migrate --force
