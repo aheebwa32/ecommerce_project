@@ -56,7 +56,6 @@ jobs:
           echo "DB_PORT=3306" >> .env
           echo "DB_DATABASE=ecommerce_project" >> .env
           echo "DB_USERNAME=root" >> .env
-          echo "DB_PASSWORD=" >> .env
 
 
       # Ensure MySQL is running (for local MySQL service)
