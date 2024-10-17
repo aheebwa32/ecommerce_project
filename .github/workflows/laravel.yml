@@ -8,8 +8,7 @@ on:
       - lynn
       - V2*
   pull_request:
-    branches:
-      - main
+     types: [assigned, edited, opened, synchronize, reopened]
       
 
 
