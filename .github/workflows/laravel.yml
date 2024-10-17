@@ -1,0 +1,41 @@
+name: Laravel CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      - aheebwa
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the latest version of the code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Set up PHP with version 8.2
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      # Install Composer dependencies
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-scripts --no-progress
+
+      # Generate application key (if necessary)
+      - name: Generate Application Key
+        run: php artisan key:generate
+
+      # Run database migrations (if required)
+      - name: Run Migrations
+        run: php artisan migrate --force
+
+      # Run tests using PHPUnit
+      - name: Run Tests
+        run: php artisan test
