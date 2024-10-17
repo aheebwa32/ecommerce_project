@@ -15,6 +15,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_DATABASE: ecommerce_project
+          MYSQL_ROOT_PASSWORD: ''  # Ensure this is set based on your actual MySQL config
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
     steps:
       # Checkout the latest version of the code
       - name: Checkout code
@@ -47,12 +61,16 @@ jobs:
       
 
       # Set environment variables
-      - name: Set environment variables
+       - name: Set environment variables
         run: |
           echo "APP_ENV=testing" >> .env
           echo "APP_KEY=base64:XYzqBnlzNzrKtagh9OOSKoAVzgMDE6PlJB25K7vdXMs=" >> .env
           echo "DB_CONNECTION=mysql" >> .env
-          echo "DB_DATABASE=database/database.mysql" >> .env
+          echo "DB_HOST=mysql" >> .env  # Set to 'mysql' for GitHub Actions
+          echo "DB_PORT=3306" >> .env
+          echo "DB_DATABASE=ecommerce_project" >> .env
+          echo "DB_USERNAME=root" >> .env
+          echo "DB_PASSWORD=" >> .env
 
       # Run database migrations (if required)
       - name: Run Migrations
