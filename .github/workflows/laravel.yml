@@ -34,7 +34,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '20'
 
       # Install NPM Dependencies
       - name: Install NPM Dependencies
@@ -44,9 +44,7 @@ jobs:
       - name: Build NPM Assets
         run: npm run build
 
-      # Generate application key (if necessary)
-      - name: Generate Application Key
-        run: php artisan key:generate
+      
 
       # Set environment variables
       - name: Set environment variables
