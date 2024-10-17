@@ -1,0 +1,90 @@
+name: Laravel CI
+
+on:
+  push:
+    branches:
+      - main
+      - aheebwa
+      - lynn
+      - V2*
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+
+    steps:
+      # Checkout the latest version of the code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up PHP with version 8.2
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      # Install Composer dependencies
+      - name: Install Composer dependencies
+        run: composer install --optimize-autoloader --prefer-dist --no-interaction --no-scripts --no-progress
+
+      # Install Node.js
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      # Install NPM Dependencies
+      - name: Install NPM Dependencies
+        run: npm install
+
+      # Build NPM Assets
+      - name: Build NPM Assets
+        run: npm run build
+
+
+      # Set environment variables
+      - name: Set environment variables
+        run: |
+          echo "APP_ENV=testing" >> .env
+          echo "APP_KEY=base64:XYzqBnlzNzrKtagh9OOSKoAVzgMDE6PlJB25K7vdXMs=" >> .env
+          echo "DB_CONNECTION=mysql" >> .env
+          echo "DB_HOST=127.0.0.1" >> .env  # Set to 'mysql' for GitHub Actions
+          echo "DB_PORT=3306" >> .env
+          echo "DB_DATABASE=ecommerce_project" >> .env
+          echo "DB_USERNAME=root" >> .env
+          echo "DB_PASSWORD=root" >> .env
+
+
+      # Ensure MySQL is running (for local MySQL service)
+      - name: Ensure MySQL is installed and running
+        run: sudo systemctl start mysql
+
+      # Run database migrations (if required)
+      - name: Run Migrations
+        run: php artisan migrate --force
+
+      # Execute tests (Unit and Feature tests) via PHPUnit
+      - name: Execute tests (Unit and Feature tests) via PHPUnit
+        run: vendor/bin/phpunit
+
+      # Install PHP_CodeSniffer
+      - name: Install PHP_CodeSniffer
+        run: composer require --dev squizlabs/php_codesniffer
+
+      # Run PHP_CodeBeautifier (phpcbf)
+      - name: Run PHP_CodeBeautifier (phpcbf)
+        run: vendor/bin/phpcbf --standard=PSR12 app/ tests/
+        continue-on-error: true
+
+      # Run PHP_CodeSniffer (phpcs)
+      - name: Run PHP_CodeSniffer (phpcs)
+        run: vendor/bin/phpcs --standard=PSR12 app/ tests/
+        continue-on-error: true
+
+      # Run tests using PHPUnit
+      - name: Run Tests
+        run: php artisan test
