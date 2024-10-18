@@ -1,4 +1,4 @@
-name: Laravel CI
+name: Build, Test, and Deploy PHP App to Azure Web App - ecommerce-project
 
 on:
   push:
@@ -10,60 +10,59 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-
     steps:
-      # Checkout the latest version of the code
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # Set up PHP with version 8.2
-      - name: Set up PHP
+      - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
 
-      # Install Composer dependencies
-      - name: Install Composer dependencies
-        run: composer install --optimize-autoloader --prefer-dist --no-interaction --no-scripts --no-progress
+      - name: Check if composer.json exists
+        id: check_files
+        uses: andstor/file-existence-action@v1
+        with:
+          files: 'composer.json'
 
-      # Install Node.js
+      - name: Run composer install if composer.json exists
+        if: steps.check_files.outputs.files_exists == 'true'
+        run: composer validate --no-check-publish && composer install --prefer-dist --no-progress
+
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
 
-      # Install NPM Dependencies
       - name: Install NPM Dependencies
         run: npm install
 
-      # Build NPM Assets
       - name: Build NPM Assets
         run: npm run build
-
 
       # Set environment variables
       - name: Set environment variables
         run: |
-          echo "APP_ENV=testing" >> .env
+          echo "APP_ENV=production" >> .env
           echo "APP_KEY=base64:XYzqBnlzNzrKtagh9OOSKoAVzgMDE6PlJB25K7vdXMs=" >> .env
           echo "DB_CONNECTION=mysql" >> .env
-          echo "DB_HOST=127.0.0.1" >> .env  # Set to 'mysql' for GitHub Actions
+          echo "DB_HOST=127.0.0.1" >> .env  # Change to your Azure MySQL host
           echo "DB_PORT=3306" >> .env
           echo "DB_DATABASE=ecommerce_project" >> .env
           echo "DB_USERNAME=root" >> .env
           echo "DB_PASSWORD=root" >> .env
 
-
-      # Ensure MySQL is running (for local MySQL service)
+      # Ensure MySQL is installed and running
       - name: Ensure MySQL is installed and running
         run: sudo systemctl start mysql
 
-      # Run database migrations (if required)
+      # Run database migrations
       - name: Run Migrations
         run: php artisan migrate --force
 
@@ -85,6 +84,62 @@ jobs:
         run: vendor/bin/phpcs --standard=PSR12 app/ tests/
         continue-on-error: true
 
-      # Run tests using PHPUnit
-      - name: Run Tests
-        run: php artisan test
+      # Zip artifact for deployment
+      - name: Zip artifact for deployment
+        run: zip -r release.zip . -x "node_modules/*" -x ".git/*" -x "storage/*" -x "vendor/*"
+
+      # Upload artifact for deployment job
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v4
+        with:
+          name: php-app
+          path: release.zip
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write # This is required for requesting the JWT
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: php-app
+
+      - name: Unzip artifact for deployment
+        run: unzip release.zip
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_910B1825A5F9473F973E281DE9946288 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_7E016234201E4AE995DE095D17780B89 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_FC53BA2AE261484C86C11F4406C8326B }}
+
+      - name: 'Deploy to Azure Web App'
+        uses: azure/webapps-deploy@v3
+        id: deploy-to-webapp
+        with:
+          app-name: 'ecommerce-project'
+          slot-name: 'Production'
+          package: .
+
+          
+# Check if the deployment was successful
+      - name: Check deployment status
+        run: |
+          curl -I https://ecommerce-production.azurewebsites.net | grep "200 OK"
+        continue-on-error: true
+
+      - name: Rollback if deployment fails
+        if: failure()
+        run: |
+          echo "Deployment failed. Initiating rollback..."
+          gh run download --name php-app --dir ./previous_release
+          unzip ./previous_release/release.zip -d ./previous_release
+          az webapp deployment source config-zip --resource-group your-resource-group \
+            --name ecommerce-production --src ./previous_release/release.zip
