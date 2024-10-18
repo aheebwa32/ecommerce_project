@@ -13,7 +13,7 @@ class ProductController extends Controller
 {
     public function product(){
         $products=Product::all();
-        return view('administrator.product',compact('products'))
+        return view('administrator.product',compact('products'));
     }
 
     public function create_product(){
