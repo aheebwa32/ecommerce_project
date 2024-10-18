@@ -127,3 +127,19 @@ jobs:
           app-name: 'ecommerce-project'
           slot-name: 'Production'
           package: .
+
+          
+# Check if the deployment was successful
+      - name: Check deployment status
+        run: |
+          curl -I https://ecommerce-production.azurewebsites.net | grep "200 OK"
+        continue-on-error: true
+
+      - name: Rollback if deployment fails
+        if: failure()
+        run: |
+          echo "Deployment failed. Initiating rollback..."
+          gh run download --name php-app --dir ./previous_release
+          unzip ./previous_release/release.zip -d ./previous_release
+          az webapp deployment source config-zip --resource-group your-resource-group \
+            --name ecommerce-production --src ./previous_release/release.zip
